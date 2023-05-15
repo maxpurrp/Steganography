@@ -1,5 +1,6 @@
 import os
-def _output_byte(byte, ind) -> bytes:
+import argparse
+def _output_byte(byte : int, ind : str) -> int:
     if ind == '0':
         #if the bit being changed is 0
         if bin(byte)[-2] == '0':
@@ -16,19 +17,22 @@ def _output_byte(byte, ind) -> bytes:
             byte = byte | 0b00000011
     return byte
 
-def encoding(text):
+def encoding(text : str, pict : str):
     #Text-to-image encoding
-    with open('test.bmp', 'rb') as start_pic:
-        str = open('text.txt', 'w')
-        str.write(text)
-        if os.stat('text.txt').st_size > os.stat('test.bmp').st_size:
+    text_for_encoding = ''
+    with open(text, 'r') as msg:
+        ign = msg.readlines()
+        for elem in ign:
+            text_for_encoding += elem
+    with open(pict, 'rb') as start_pic:
+        if os.stat(text).st_size >= os.stat(pict).st_size - 54:
             print('text size is to big')
             exit()
-        with open('update.bmp', 'wb') as final_pic:
+        with open('update_pict.bmp', 'wb') as final_pic:
             pict_info = start_pic.read(54)
             #first 54 byte is info about picture in .bmp
             final_pic.write(pict_info)
-            for elem in text:
+            for elem in text_for_encoding:
                 cu_ascii_list = format(ord(elem), '08b')
                 for ind in cu_ascii_list:
                     cur_byte = int.from_bytes(start_pic.read(1), byteorder='little')
@@ -36,9 +40,9 @@ def encoding(text):
                     final_pic.write(cur_byte.to_bytes(1, byteorder='little'))
             final_pic.write(start_pic.read())
 
-def decoding():
+def decoding(pict_for_decoding : str):
     #decoding str from picture 
-    with open('update.bmp', 'rb') as pict:
+    with open(pict_for_decoding, 'rb') as pict:
         symbol = ''
         pict_info = pict.read(54)
         byte = int.from_bytes(pict.read(1),byteorder='little')
@@ -61,13 +65,15 @@ def decoding():
     print(f'output message is: {output}')
 
 def main():
-    choise = input('1 - encoding | 2 - decoding ')
-    if choise == '1':
-        text = input()
-        encoding(text)
-    if choise == '2':
-        decoding()
-    else:
-        exit()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-pict', required= True)
+    parser.add_argument('-text', required= True)
+    parser.add_argument('-action', required= True, choices= ['encoding', 'decoding'])
+    args = parser.parse_args()
+    if args.action == 'encoding':
+        encoding(args.text, args.pict)
+    if args.action == 'decoding':
+        decoding(args.pict)
+
 if __name__ == '__main__':
     main()
