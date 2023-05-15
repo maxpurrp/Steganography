@@ -43,7 +43,7 @@ def decoding():
         pict_info = pict.read(54)
         byte = int.from_bytes(pict.read(1),byteorder='little')
         while bin(byte)[-1] == '1':
-                symbol +=(bin(byte)[-2])
+                symbol +=(format(byte, '#010b'))[-2]
                 byte = int.from_bytes(pict.read(1),byteorder='little')
     word = ''
     bin_ascii_list = []
@@ -69,6 +69,5 @@ def main():
         decoding()
     else:
         exit()
-        
 if __name__ == '__main__':
     main()
