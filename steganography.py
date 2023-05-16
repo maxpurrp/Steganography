@@ -25,7 +25,7 @@ def encoding(text : str, pict : str):
         for elem in ign:
             text_for_encoding += elem
     with open(pict, 'rb') as start_pic:
-        if os.stat(text).st_size >= os.stat(pict).st_size - 54:
+        if (os.stat(pict).st_size  - 54) < len(text_for_encoding) * 8:
             print('text size is to big')
             exit()
         with open('update_pict.bmp', 'wb') as final_pic:
