@@ -2,19 +2,11 @@ import os
 import argparse
 def _byte_encoding(byte : int, ind : str) -> int:
     if ind == '0':
-        #if the bit being changed is 0
-        if bin(byte)[-2] == '0':
-            byte = byte | 0b00000001
-        else:
-            byte = byte & 0b11111101
-            byte = byte | 0b00000001
+        byte = byte & 0b11111101
+        byte = byte | 0b00000001
     if ind == '1':
-        #if the bit being changed is 1
-        if bin(byte)[-2] == '1':
-            byte = byte | 0b00000011
-        else:
-            byte = byte & 0b11111101
-            byte = byte | 0b00000011
+        byte = byte & 0b11111101
+        byte = byte | 0b00000011
     return byte
 
 def encoding(text_path : str, image_path : str):
@@ -24,10 +16,9 @@ def encoding(text_path : str, image_path : str):
         for elem in msg.readlines():
             text_for_encoding += elem
     with open(image_path, 'rb') as start_pic:
-        if (os.stat(image_path).st_size  - 54) < len(text_for_encoding) * 8: 
-            print('text size is to big')
+        if (os.stat(image_path).st_size  - 54) < len(text_for_encoding) * 8:
+            print(f'text size is {len(text_for_encoding)} out of {int((os.stat(image_path).st_size  - 54) / 8)} possible ')
             exit()
-        print(f'text size is {len(text_for_encoding)} out of {int((os.stat(image_path).st_size  - 54) / 8)} possible ')
         with open('update_pict.bmp', 'wb') as final_pic:
             pict_info = start_pic.read(54)
             #first 54 byte is info about picture in .bmp
@@ -63,14 +54,17 @@ def decoding(pict_for_decoding : str):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-pict', required = True, help ='name or path to file')
-    parser.add_argument('-text', required = True, help ='name or path to file')
+    parser.add_argument('-image', required = True, help ='name or path to file')
+    parser.add_argument('-text_path', required = False, help ='name or path to file')
     parser.add_argument('-action', required = True, choices = ['encoding', 'decoding'], help = 'encoding text to image | decoding text from text')
     args = parser.parse_args()
     if args.action == 'encoding':
-        encoding(args.text, args.pict)
+        if args.text_path:
+            encoding(args.text_path, args.image)
+        else:
+            print('incorrect imput')
     if args.action == 'decoding':
-        decoding(args.pict)
-
+        decoding(args.image)
+        
 if __name__ == '__main__':
     main()
