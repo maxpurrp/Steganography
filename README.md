@@ -13,4 +13,4 @@ python3 D:\\directory\\steganography.py -image=test.bmp -text_path=text.txt -act
 Функция в цикле считывает байты и с каждого байта вычленяет бит, который несет в себе значение ascii. После чтения всех байт, функция обрабатывает ascii value, и выводит на консоль зашифрованный текст. Для декодирования необходима картинка  формата '.bmp'.
 Для тестирования введите в консоль:
 python3 D:\\directory\\steganography.py 
--image=test.bmp -action=decoding
+-image=update_pict.bmp -action=decoding
