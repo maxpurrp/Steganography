@@ -65,6 +65,6 @@ def main():
             print('incorrect imput')
     if args.action == 'decoding':
         decoding(args.image)
-        
+
 if __name__ == '__main__':
     main()
